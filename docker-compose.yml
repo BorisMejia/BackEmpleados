@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+
+  postgres:
+    container_name: postgres
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - DATABASE_HOST=127.0.0.1
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=java
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "crud@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "javaCRUD"
+    ports:
+      - "80:80"
+    depends_on:
+      - postgres
+
+  java-app:
+    container_name: java_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=jdbc:postgresql://postgres:5432/java
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=root
+    depends_on:
+      - postgres
